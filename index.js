@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Wallet authentication logic using authenticationRequest
+  // Wallet authentication logic with enhanced error handling
   async function authenticateWithXverse() {
     console.log("Connect button clicked - initiating Xverse Wallet authentication...");
     if (!detectXverseProvider()) {
@@ -93,28 +93,42 @@ document.addEventListener("DOMContentLoaded", () => {
           },
         });
 
-        console.log("Authentication response:", response); // Debug log
+        console.log("Raw response from authenticationRequest:", response); // Log raw response
 
-        if (response && response.address) {
-          userAddresses = {
-            stacksAddress: response.address,
-          };
+        if (!response) {
+          console.error("Empty or invalid response from authenticationRequest.");
+          showPopup("Failed to authenticate. Empty response received.");
+          return;
+        }
 
-          walletConnected = true;
+        try {
+          const parsedResponse = JSON.parse(response); // Parse response if needed
+          console.log("Parsed response:", parsedResponse);
 
-          // Update UI
-          connectButton.disabled = true;
-          connectButton.classList.add("disabled");
-          buidlButton.disabled = false;
-          buidlButton.classList.remove("disabled");
-          boost += 0.2;
-          enableButtons([...onboardingButtons, ...questButtons]);
-          updatePointsDisplay();
+          if (parsedResponse && parsedResponse.address) {
+            userAddresses = {
+              stacksAddress: parsedResponse.address,
+            };
 
-          showPopup(`Connected: ${userAddresses.stacksAddress.substring(0, 6)}...`);
-        } else {
-          console.error("Xverse Wallet authentication failed:", response);
-          showPopup("Failed to authenticate with Xverse Wallet. Please try again.");
+            walletConnected = true;
+
+            // Update UI
+            connectButton.disabled = true;
+            connectButton.classList.add("disabled");
+            buidlButton.disabled = false;
+            buidlButton.classList.remove("disabled");
+            boost += 0.2;
+            enableButtons([...onboardingButtons, ...questButtons]);
+            updatePointsDisplay();
+
+            showPopup(`Connected: ${userAddresses.stacksAddress.substring(0, 6)}...`);
+          } else {
+            console.error("Authentication failed - no address in response:", parsedResponse);
+            showPopup("Authentication failed. No address found in the response.");
+          }
+        } catch (parseError) {
+          console.error("Error parsing JSON response:", parseError);
+          showPopup("Failed to parse authentication response.");
         }
       } else {
         console.error("StacksProvider 'authenticationRequest' method not available.");
