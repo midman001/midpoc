@@ -1,4 +1,6 @@
 
+import { request } from "sats-connect";
+
 document.addEventListener("DOMContentLoaded", () => {
   let walletConnected = false;
   let points = 0;
@@ -61,85 +63,54 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Detect Xverse Wallet provider
-  function detectXverseProvider() {
-    if (typeof window.XverseProviders !== "undefined") {
-      console.log("Xverse Wallet provider detected:", window.XverseProviders);
-      return true;
-    } else {
-      console.warn("Xverse Wallet provider is not available in the browser.");
-      showPopup("Xverse Wallet provider is not available. Please ensure Xverse Wallet is installed and active.");
-      return false;
-    }
-  }
-
-  // Wallet authentication logic with enhanced error handling
-  async function authenticateWithXverse() {
-    console.log("Connect button clicked - initiating Xverse Wallet authentication...");
-    if (!detectXverseProvider()) {
-      return;
-    }
+  // Connect to Xverse Wallet using wallet_connect
+  async function connectToXverse() {
+    console.log("Initiating wallet connection via wallet_connect...");
 
     try {
-      const stacksProvider = window.XverseProviders?.StacksProvider;
+      const response = await request('wallet_connect', {
+        addresses: ['ordinals', 'payment', 'stacks'],
+        message: "Connect your Xverse Wallet to MIDL Board Game",
+      });
 
-      if (stacksProvider && typeof stacksProvider.authenticationRequest === "function") {
-        console.log("Attempting authentication using 'authenticationRequest' method.");
-        const response = await stacksProvider.authenticationRequest({
-          redirectUri: "https://example.com/callback", // Replace with your app's callback URL
-          appDetails: {
-            name: "MIDL Board Game",
-            icon: "https://example.com/icon.png", // Replace with your app's icon URL
-          },
-        });
+      if (response.status === 'success') {
+        console.log("Connection successful:", response.result.addresses);
 
-        console.log("Raw response from authenticationRequest:", response); // Log raw response
+        const paymentAddress = response.result.addresses.find(address => address.purpose === 'payment');
+        const ordinalsAddress = response.result.addresses.find(address => address.purpose === 'ordinals');
+        const stacksAddress = response.result.addresses.find(address => address.purpose === 'stacks');
 
-        if (!response) {
-          console.error("Empty or invalid response from authenticationRequest.");
-          showPopup("Failed to authenticate. Empty response received.");
-          return;
-        }
+        console.log("Payment Address:", paymentAddress);
+        console.log("Ordinals Address:", ordinalsAddress);
+        console.log("Stacks Address:", stacksAddress);
 
-        try {
-          const parsedResponse = JSON.parse(response); // Parse response if needed
-          console.log("Parsed response:", parsedResponse);
+        walletConnected = true;
 
-          if (parsedResponse && parsedResponse.address) {
-            userAddresses = {
-              stacksAddress: parsedResponse.address,
-            };
+        // Update UI with connected status
+        connectButton.disabled = true;
+        connectButton.classList.add("disabled");
+        buidlButton.disabled = false;
+        buidlButton.classList.remove("disabled");
+        boost += 0.2;
+        enableButtons([...onboardingButtons, ...questButtons]);
+        updatePointsDisplay();
 
-            walletConnected = true;
-
-            // Update UI
-            connectButton.disabled = true;
-            connectButton.classList.add("disabled");
-            buidlButton.disabled = false;
-            buidlButton.classList.remove("disabled");
-            boost += 0.2;
-            enableButtons([...onboardingButtons, ...questButtons]);
-            updatePointsDisplay();
-
-            showPopup(`Connected: ${userAddresses.stacksAddress.substring(0, 6)}...`);
-          } else {
-            console.error("Authentication failed - no address in response:", parsedResponse);
-            showPopup("Authentication failed. No address found in the response.");
-          }
-        } catch (parseError) {
-          console.error("Error parsing JSON response:", parseError);
-          showPopup("Failed to parse authentication response.");
-        }
+        showPopup(`Connected: ${paymentAddress.address.substring(0, 6)}...`);
       } else {
-        console.error("StacksProvider 'authenticationRequest' method not available.");
-        showPopup("Xverse Wallet does not support 'authenticationRequest'. Please check the wallet's integration documentation.");
+        if (response.error.code === RpcErrorCode.USER_REJECTION) {
+          console.warn("User rejected the connection.");
+          showPopup("Connection rejected by the user.");
+        } else {
+          console.error("Connection error:", response.error);
+          showPopup("An error occurred while connecting to the wallet.");
+        }
       }
-    } catch (err) {
-      console.error("Error during Xverse Wallet authentication:", err); // Debug log
-      showPopup("An error occurred during authentication with Xverse Wallet.");
+    } catch (error) {
+      console.error("Error during wallet connection:", error);
+      showPopup("Failed to connect to the wallet.");
     }
   }
 
-  // Attach the authentication function to the button's click event
-  connectButton.addEventListener("click", authenticateWithXverse);
+  // Attach the connect function to the button's click event
+  connectButton.addEventListener("click", connectToXverse);
 });
