@@ -73,43 +73,59 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Dynamically log available methods in StacksProvider and test them
-  async function logAndTestStacksProviderMethods() {
-    const stacksProvider = window.XverseProviders?.StacksProvider;
-    if (stacksProvider) {
-      const availableMethods = Object.keys(stacksProvider).filter(key => typeof stacksProvider[key] === "function");
-      console.log("Available methods in StacksProvider:", availableMethods);
-
-      for (const method of availableMethods) {
-        try {
-          console.log(`Testing method: ${method}`);
-          const response = await stacksProvider[method]({
-            appDetails: {
-              name: "MIDL Board Game",
-              icon: "https://example.com/icon.png", // Replace with your app's icon URL
-            },
-          });
-          console.log(`Response from ${method}:`, response);
-          break; // Exit loop if a method succeeds
-        } catch (error) {
-          console.warn(`Error testing ${method}:`, error);
-        }
-      }
-    } else {
-      console.warn("StacksProvider is not available.");
-    }
-  }
-
-  // Simplified connection logic
-  async function connectToXverse() {
-    console.log("Connect button clicked - initiating Xverse Wallet connection...");
+  // Wallet authentication logic using authenticationRequest
+  async function authenticateWithXverse() {
+    console.log("Connect button clicked - initiating Xverse Wallet authentication...");
     if (!detectXverseProvider()) {
       return;
     }
 
-    await logAndTestStacksProviderMethods(); // Log and test methods dynamically
+    try {
+      const stacksProvider = window.XverseProviders?.StacksProvider;
+
+      if (stacksProvider && typeof stacksProvider.authenticationRequest === "function") {
+        console.log("Attempting authentication using 'authenticationRequest' method.");
+        const response = await stacksProvider.authenticationRequest({
+          redirectUri: "https://example.com/callback", // Replace with your app's callback URL
+          appDetails: {
+            name: "MIDL Board Game",
+            icon: "https://example.com/icon.png", // Replace with your app's icon URL
+          },
+        });
+
+        console.log("Authentication response:", response); // Debug log
+
+        if (response && response.address) {
+          userAddresses = {
+            stacksAddress: response.address,
+          };
+
+          walletConnected = true;
+
+          // Update UI
+          connectButton.disabled = true;
+          connectButton.classList.add("disabled");
+          buidlButton.disabled = false;
+          buidlButton.classList.remove("disabled");
+          boost += 0.2;
+          enableButtons([...onboardingButtons, ...questButtons]);
+          updatePointsDisplay();
+
+          showPopup(`Connected: ${userAddresses.stacksAddress.substring(0, 6)}...`);
+        } else {
+          console.error("Xverse Wallet authentication failed:", response);
+          showPopup("Failed to authenticate with Xverse Wallet. Please try again.");
+        }
+      } else {
+        console.error("StacksProvider 'authenticationRequest' method not available.");
+        showPopup("Xverse Wallet does not support 'authenticationRequest'. Please check the wallet's integration documentation.");
+      }
+    } catch (err) {
+      console.error("Error during Xverse Wallet authentication:", err); // Debug log
+      showPopup("An error occurred during authentication with Xverse Wallet.");
+    }
   }
 
-  // Attach the connect function to the button's click event
-  connectButton.addEventListener("click", connectToXverse);
+  // Attach the authentication function to the button's click event
+  connectButton.addEventListener("click", authenticateWithXverse);
 });
