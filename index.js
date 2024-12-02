@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Xverse Wallet connection logic using StacksProvider
+  // Xverse Wallet connection logic using authenticationRequest
   async function connectToXverse() {
     console.log("Connect button clicked - initiating Xverse Wallet connection...");
     if (!detectXverseProvider()) {
@@ -83,18 +83,16 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const stacksProvider = window.XverseProviders?.StacksProvider;
 
-      if (stacksProvider && typeof stacksProvider.request === "function") {
-        const response = await stacksProvider.request({
-          method: "connect",
-          params: {
-            appDetails: {
-              name: "MIDL Board Game",
-              icon: "https://example.com/icon.png", // Replace with your app icon URL
-            },
+      if (stacksProvider && typeof stacksProvider.authenticationRequest === "function") {
+        const response = await stacksProvider.authenticationRequest({
+          redirectUri: "https://example.com/callback", // Replace with your app's callback URL
+          appDetails: {
+            name: "MIDL Board Game",
+            icon: "https://example.com/icon.png",
           },
         });
 
-        console.log("Wallet connection response:", response); // Debug log
+        console.log("Authentication response:", response); // Debug log
 
         if (response && response.address) {
           userAddresses = {
@@ -114,12 +112,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
           showPopup(`Connected: ${userAddresses.stacksAddress.substring(0, 6)}...`);
         } else {
-          console.error("Xverse Wallet connection failed:", response);
+          console.error("Xverse Wallet authentication failed:", response);
           showPopup("Failed to connect to Xverse Wallet. Please try again.");
         }
       } else {
-        console.error("StacksProvider request method not available.");
-        showPopup("Xverse Wallet does not support the 'connect' method. Please check the wallet's integration documentation.");
+        console.error("StacksProvider authenticationRequest method not available.");
+        showPopup("Xverse Wallet does not support 'authenticationRequest'. Please check the wallet's integration documentation.");
       }
     } catch (err) {
       console.error("Error connecting to Xverse Wallet:", err); // Debug log
