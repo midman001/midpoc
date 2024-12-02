@@ -2,21 +2,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Game initialized!");
 
-    let walletConnected = false;
+    // Placeholder for connect button logic
     const connectButton = document.getElementById("connectButton");
-    const pointsDisplay = document.getElementById("pointsDisplay");
 
-    const connectFunctionality = () => {
-        if (!walletConnected) {
-            walletConnected = true;
-            connectButton.textContent = "Connected";
-            connectButton.disabled = true;
-            pointsDisplay.textContent = "Points: 0 | BOOST: 0.2%";
-            console.log("Wallet connected successfully!");
-        } else {
-            console.log("Wallet already connected.");
-        }
+    const connectPlaceholder = () => {
+        console.log("Connect button clicked! (Xverse functionality temporarily removed)");
     };
 
-    connectButton.addEventListener("click", connectFunctionality);
+    connectButton.addEventListener("click", connectPlaceholder);
 });
