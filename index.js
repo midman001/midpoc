@@ -1,13 +1,24 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("Game initialized!");
+    console.log("satsConnect:", window.satsConnect);
 
-    // Placeholder for connect button logic
-    const connectButton = document.getElementById("connectButton");
+    if (!window.satsConnect || typeof window.satsConnect.request !== "function") {
+        console.error("satsConnect is not properly loaded.");
+        alert("Error: satsConnect library is not available.");
+        return;
+    }
 
-    const connectPlaceholder = () => {
-        console.log("Connect button clicked! (Xverse functionality temporarily removed)");
+    const connectToXverse = async () => {
+        try {
+            const response = await window.satsConnect.request('wallet_connect', {
+                addresses: ['ordinals', 'payment', 'stacks'],
+                message: "Connect your Xverse Wallet to MIDL Board Game",
+            });
+            console.log("Response:", response);
+        } catch (err) {
+            console.error("Error during wallet connection:", err);
+        }
     };
 
-    connectButton.addEventListener("click", connectPlaceholder);
+    document.getElementById("connectButton").addEventListener("click", connectToXverse);
 });
