@@ -61,13 +61,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Detect Xverse Wallet provider
+  function detectXverseProvider() {
+    if (typeof window.XverseProviders !== "undefined") {
+      console.log("Xverse Wallet provider detected:", window.XverseProviders);
+      return true;
+    } else {
+      console.warn("Xverse Wallet provider is not available in the browser.");
+      showPopup("Xverse Wallet provider is not available. Please ensure Xverse Wallet is installed and active.");
+      return false;
+    }
+  }
+
   // Xverse Wallet connection logic
   async function connectToXverse() {
     console.log("Connect button clicked - initiating Xverse Wallet connection...");
-    console.log("XverseProviders Object:", window.XverseProviders); // Debugging line
+    if (!detectXverseProvider()) {
+      return;
+    }
 
-    if (window.XverseProviders) {
-      try {
+    try {
+      // Log the XverseProviders object to understand its structure
+      console.log("XverseProviders object:", window.XverseProviders);
+
+      // Check if the request method is available
+      if (typeof window.XverseProviders.request === "function") {
         const response = await window.XverseProviders.request({
           method: 'wallet_connect',
           params: {
@@ -101,13 +119,13 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("Xverse Wallet connection failed:", response.error);
           showPopup("Failed to connect to Xverse Wallet. Please try again.");
         }
-      } catch (err) {
-        console.error("Error connecting to Xverse Wallet:", err); // Debug log
-        showPopup("An error occurred while connecting to Xverse Wallet.");
+      } else {
+        console.error("window.XverseProviders.request is not a function");
+        showPopup("Xverse Wallet does not support the 'request' method. Please check the wallet's integration documentation.");
       }
-    } else {
-      showPopup("Xverse Wallet provider is not available!");
-      console.warn("Xverse Wallet provider not available in the browser."); // Debug log
+    } catch (err) {
+      console.error("Error connecting to Xverse Wallet:", err); // Debug log
+      showPopup("An error occurred while connecting to Xverse Wallet.");
     }
   }
 
