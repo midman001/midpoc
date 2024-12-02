@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Xverse Wallet connection logic
+  // Xverse Wallet connection logic with fallback methods
   async function connectToXverse() {
     console.log("Connect button clicked - initiating Xverse Wallet connection...");
     if (!detectXverseProvider()) {
@@ -119,9 +119,14 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("Xverse Wallet connection failed:", response.error);
           showPopup("Failed to connect to Xverse Wallet. Please try again.");
         }
+      } else if (typeof window.XverseProviders.connect === "function") {
+        console.log("Attempting fallback connection using 'connect' method");
+        const response = await window.XverseProviders.connect(); // Alternative method
+        console.log("Fallback connection response:", response);
+        showPopup("Fallback connection succeeded. Check console for details.");
       } else {
-        console.error("window.XverseProviders.request is not a function");
-        showPopup("Xverse Wallet does not support the 'request' method. Please check the wallet's integration documentation.");
+        console.error("No valid connection method available on XverseProviders.");
+        showPopup("Xverse Wallet does not support a valid connection method. Please check the wallet's integration documentation.");
       }
     } catch (err) {
       console.error("Error connecting to Xverse Wallet:", err); // Debug log
