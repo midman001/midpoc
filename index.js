@@ -1,21 +1,25 @@
-import Wallet from './js/index.mjs';
 
 document.addEventListener("DOMContentLoaded", () => {
-    const wallet = new Wallet();
+    const board = document.getElementById("board");
 
-    const connectButton = document.getElementById("connectButton");
+    // Ensure the board exists
+    if (!board) {
+        console.error("Board element not found!");
+        return;
+    }
 
-    const connectToXverse = async () => {
-        try {
-            const response = await wallet.request("wallet_connect", {
-                addresses: ["ordinals", "payment", "stacks"],
-                message: "Connect your Xverse Wallet to MIDL Board Game",
-            });
-            console.log("Wallet connection response:", response);
-        } catch (err) {
-            console.error("Error during wallet connection:", err);
+    // Function to create the game board
+    function createBoard() {
+        for (let i = 0; i < 30; i++) {
+            const square = document.createElement("div");
+            square.classList.add("square");
+            square.innerText = i + 1;
+            board.appendChild(square);
         }
-    };
+    }
 
-    connectButton.addEventListener("click", connectToXverse);
+    // Render the board
+    createBoard();
+
+    console.log("Board initialized with squares.");
 });
