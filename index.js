@@ -73,11 +73,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Dynamically log available methods in StacksProvider
-  function logStacksProviderMethods() {
+  // Dynamically log available methods in StacksProvider and test them
+  async function logAndTestStacksProviderMethods() {
     const stacksProvider = window.XverseProviders?.StacksProvider;
     if (stacksProvider) {
-      console.log("Available methods in StacksProvider:", Object.keys(stacksProvider).filter(key => typeof stacksProvider[key] === "function"));
+      const availableMethods = Object.keys(stacksProvider).filter(key => typeof stacksProvider[key] === "function");
+      console.log("Available methods in StacksProvider:", availableMethods);
+
+      for (const method of availableMethods) {
+        try {
+          console.log(`Testing method: ${method}`);
+          const response = await stacksProvider[method]({
+            appDetails: {
+              name: "MIDL Board Game",
+              icon: "https://example.com/icon.png", // Replace with your app's icon URL
+            },
+          });
+          console.log(`Response from ${method}:`, response);
+          break; // Exit loop if a method succeeds
+        } catch (error) {
+          console.warn(`Error testing ${method}:`, error);
+        }
+      }
     } else {
       console.warn("StacksProvider is not available.");
     }
@@ -90,51 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    logStacksProviderMethods(); // Log available methods
-
-    try {
-      const stacksProvider = window.XverseProviders?.StacksProvider;
-
-      if (stacksProvider && typeof stacksProvider.connect === "function") {
-        console.log("Attempting connection using 'connect' method.");
-        const response = await stacksProvider.connect({
-          appDetails: {
-            name: "MIDL Board Game",
-            icon: "https://example.com/icon.png", // Replace with your app's icon URL
-          },
-        });
-
-        console.log("Connection response:", response); // Debug log
-
-        if (response && response.address) {
-          userAddresses = {
-            stacksAddress: response.address,
-          };
-
-          walletConnected = true;
-
-          // Update UI
-          connectButton.disabled = true;
-          connectButton.classList.add("disabled");
-          buidlButton.disabled = false;
-          buidlButton.classList.remove("disabled");
-          boost += 0.2;
-          enableButtons([...onboardingButtons, ...questButtons]);
-          updatePointsDisplay();
-
-          showPopup(`Connected: ${userAddresses.stacksAddress.substring(0, 6)}...`);
-        } else {
-          console.error("Xverse Wallet connection failed:", response);
-          showPopup("Failed to connect to Xverse Wallet. Please try again.");
-        }
-      } else {
-        console.error("StacksProvider 'connect' method not available.");
-        showPopup("Xverse Wallet does not support 'connect'. Please check the wallet's integration documentation.");
-      }
-    } catch (err) {
-      console.error("Error connecting to Xverse Wallet:", err); // Debug log
-      showPopup("An error occurred while connecting to Xverse Wallet.");
-    }
+    await logAndTestStacksProviderMethods(); // Log and test methods dynamically
   }
 
   // Attach the connect function to the button's click event
