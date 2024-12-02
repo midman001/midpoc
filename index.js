@@ -1,0 +1,116 @@
+
+document.addEventListener("DOMContentLoaded", () => {
+  let walletConnected = false;
+  let points = 0;
+  let boost = 0;
+  let position = -1;
+  let userAddresses = {};
+
+  const connectButton = document.getElementById("connectButton");
+  const pointsDisplay = document.getElementById("pointsDisplay");
+  const buidlButton = document.getElementById("buidlButton");
+  const popup = document.getElementById("popup");
+  const onboardingButtons = [
+    document.getElementById("acceptRules"),
+    document.getElementById("joinCommunity"),
+    document.getElementById("followX"),
+    document.getElementById("joinDiscord"),
+  ];
+  const questButtons = [
+    document.getElementById("quest1"),
+    document.getElementById("quest2"),
+    document.getElementById("quest3"),
+  ];
+  const board = document.getElementById("board");
+
+  // Create the game board
+  function createBoard() {
+    if (!board) {
+      console.error("Board element not found!");
+      return;
+    }
+    for (let i = 0; i < 30; i++) {
+      const square = document.createElement("div");
+      square.classList.add("square");
+      board.appendChild(square);
+    }
+  }
+
+  createBoard();
+
+  // Update points and BOOST display
+  function updatePointsDisplay() {
+    pointsDisplay.innerText = `Points: ${points} | BOOST: ${(boost * 100).toFixed(1)}%`;
+  }
+
+  // Show popup with auto-dismiss
+  function showPopup(message) {
+    popup.innerText = message;
+    popup.classList.add("active");
+    setTimeout(() => {
+      popup.classList.remove("active");
+    }, 3000);
+  }
+
+  // Enable buttons
+  function enableButtons(buttons) {
+    buttons.forEach((button) => {
+      button.classList.add("enabled");
+      button.classList.remove("disabled");
+      button.disabled = false;
+    });
+  }
+
+  // Xverse Wallet connection logic
+  async function connectToXverse() {
+    console.log("Connect button clicked - initiating Xverse Wallet connection...");
+    console.log("XverseProviders Object:", window.XverseProviders); // Debugging line
+
+    if (window.XverseProviders) {
+      try {
+        const response = await window.XverseProviders.request({
+          method: 'wallet_connect',
+          params: {
+            addresses: ['ordinals', 'payment', 'stacks'],
+            message: 'Connect your Xverse Wallet to access the MIDL Board Game features.',
+          },
+        });
+
+        console.log("Xverse Wallet response:", response); // Debug log
+
+        if (response.status === 'success') {
+          userAddresses = {
+            paymentAddress: response.result.addresses.find(addr => addr.purpose === 'payment').address,
+            ordinalsAddress: response.result.addresses.find(addr => addr.purpose === 'ordinals').address,
+            stacksAddress: response.result.addresses.find(addr => addr.purpose === 'stacks').address,
+          };
+
+          walletConnected = true;
+
+          // Update UI
+          connectButton.disabled = true;
+          connectButton.classList.add("disabled");
+          buidlButton.disabled = false;
+          buidlButton.classList.remove("disabled");
+          boost += 0.2;
+          enableButtons([...onboardingButtons, ...questButtons]);
+          updatePointsDisplay();
+
+          showPopup(`Connected: ${userAddresses.paymentAddress.substring(0, 6)}...`);
+        } else {
+          console.error("Xverse Wallet connection failed:", response.error);
+          showPopup("Failed to connect to Xverse Wallet. Please try again.");
+        }
+      } catch (err) {
+        console.error("Error connecting to Xverse Wallet:", err); // Debug log
+        showPopup("An error occurred while connecting to Xverse Wallet.");
+      }
+    } else {
+      showPopup("Xverse Wallet provider is not available!");
+      console.warn("Xverse Wallet provider not available in the browser."); // Debug log
+    }
+  }
+
+  // Attach the connect function to the button's click event
+  connectButton.addEventListener("click", connectToXverse);
+});
