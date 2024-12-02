@@ -2,169 +2,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cdn.sats-connect.com/latest/sats-connect.min.js"></script>
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval';">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MIDL Board Game</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #1a1a1a;
-      color: white;
-      overflow: hidden;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: black;
-      padding: 10px 20px;
-    }
-    .header img {
-      height: 40px;
-    }
-    .header .right-section {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .connect-button {
-      padding: 5px 15px;
-      background-color: orange;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .connect-button.disabled {
-      background-color: gray;
-      cursor: not-allowed;
-    }
-    .main-container {
-      position: relative;
-      height: calc(100vh - 60px);
-      background: url('background.webp') center center/cover no-repeat;
-    }
-    .onboarding-section,
-    .available-quests-section {
-      position: absolute;
-      width: 350px;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-    }
-    .onboarding-section {
-      top: 10%;
-      left: 5%;
-    }
-    .available-quests-section {
-      top: 35%;
-      left: 5%;
-    }
-    .section-title {
-      font-size: 18px;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-    .quest-button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: gray;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: not-allowed;
-      display: inline-block;
-    }
-    .quest-button.enabled {
-      background-color: orange;
-      cursor: pointer;
-    }
-    .buidl-button {
-      position: absolute;
-      background-color: orange;
-      color: white;
-      font-size: 22px;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1000;
-    }
-    .board {
-      position: absolute;
-      top: 65%;
-      left: 25%;
-      width: 50%;
-      height: 20%;
-      display: flex;
-      perspective: 1000px;
-    }
-    .square {
-      flex: 1;
-      background-color: orange;
-      opacity: 0.1;
-      height: 100%;
-      transform-origin: center;
-    }
-    .square.completed {
-      opacity: 1;
-    }
-    .popup {
-      position: fixed;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(255, 165, 0, 0.9);
-      color: white;
-      padding: 20px 40px;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      display: none;
-      z-index: 1000;
-    }
-    .popup.active {
-      display: block;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval';">
+    <script src="./js/sats-connect.min.js"></script>
+    <title>MIDL Board Game</title>
 </head>
 <body>
-  <div class="header">
-    <img src="logo.png" alt="MIDL Logo">
-    <div class="right-section">
-      <div id="pointsDisplay">Points: 0 | BOOST: 0.0%</div>
-      <button id="connectButton" class="connect-button">Connect</button>
-    </div>
-  </div>
-  <div class="main-container">
-    <div class="onboarding-section">
-      <div class="section-title">Onboarding</div>
-      <button id="acceptRules" class="quest-button disabled">Accept Rules</button>
-      <button id="joinCommunity" class="quest-button disabled">Join X Community</button>
-      <button id="followX" class="quest-button disabled">Follow on X</button>
-      <button id="joinDiscord" class="quest-button disabled">Join Discord</button>
-    </div>
-    <div class="available-quests-section">
-      <div class="section-title">Available Quests</div>
-      <button id="quest1" class="quest-button disabled">Like/RT/Comment on this tweet</button>
-      <button id="quest2" class="quest-button disabled">BTC: Read the article and take the quiz</button>
-      <button id="quest3" class="quest-button disabled">MIDL Partner: Follow on X</button>
-    </div>
-    <button id="buidlButton" class="buidl-button disabled">BUIDL</button>
-    <div id="board" class="board"></div>
-  </div>
-  <div id="popup" class="popup"></div>
-
-  <!-- Script -->
-  <script type="module" src="index.js"></script>
+    <header>
+        <button id="connectButton">Connect Wallet</button>
+    </header>
+    <div id="pointsDisplay">Points: 0 | BOOST: 0%</div>
+    <div id="buidlButton" class="disabled">BUIDL</div>
+    <div id="board"></div>
+    <div id="popup" class="popup"></div>
+    <script src="index.js"></script>
 </body>
 </html>

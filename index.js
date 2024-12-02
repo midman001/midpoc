@@ -1,10 +1,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("satsConnect:", window.satsConnect);
+    console.log("satsConnect is:", window.satsConnect);
 
     if (!window.satsConnect || typeof window.satsConnect.request !== "function") {
-        console.error("satsConnect is not properly loaded.");
-        alert("Error: satsConnect library is not available.");
+        console.error("satsConnect is not available or improperly initialized.");
+        alert("Error: satsConnect library is not loaded. Please check your setup.");
         return;
     }
 
