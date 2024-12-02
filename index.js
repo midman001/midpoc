@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Xverse Wallet connection logic with fallback methods
+  // Xverse Wallet connection logic using StacksProvider
   async function connectToXverse() {
     console.log("Connect button clicked - initiating Xverse Wallet connection...");
     if (!detectXverseProvider()) {
@@ -81,26 +81,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // Log the XverseProviders object to understand its structure
-      console.log("XverseProviders object:", window.XverseProviders);
+      const stacksProvider = window.XverseProviders?.StacksProvider;
 
-      // Check if the request method is available
-      if (typeof window.XverseProviders.request === "function") {
-        const response = await window.XverseProviders.request({
-          method: 'wallet_connect',
+      if (stacksProvider && typeof stacksProvider.request === "function") {
+        const response = await stacksProvider.request({
+          method: "connect",
           params: {
-            addresses: ['ordinals', 'payment', 'stacks'],
-            message: 'Connect your Xverse Wallet to access the MIDL Board Game features.',
+            appDetails: {
+              name: "MIDL Board Game",
+              icon: "https://example.com/icon.png", // Replace with your app icon URL
+            },
           },
         });
 
-        console.log("Xverse Wallet response:", response); // Debug log
+        console.log("Wallet connection response:", response); // Debug log
 
-        if (response.status === 'success') {
+        if (response && response.address) {
           userAddresses = {
-            paymentAddress: response.result.addresses.find(addr => addr.purpose === 'payment').address,
-            ordinalsAddress: response.result.addresses.find(addr => addr.purpose === 'ordinals').address,
-            stacksAddress: response.result.addresses.find(addr => addr.purpose === 'stacks').address,
+            stacksAddress: response.address,
           };
 
           walletConnected = true;
@@ -114,19 +112,14 @@ document.addEventListener("DOMContentLoaded", () => {
           enableButtons([...onboardingButtons, ...questButtons]);
           updatePointsDisplay();
 
-          showPopup(`Connected: ${userAddresses.paymentAddress.substring(0, 6)}...`);
+          showPopup(`Connected: ${userAddresses.stacksAddress.substring(0, 6)}...`);
         } else {
-          console.error("Xverse Wallet connection failed:", response.error);
+          console.error("Xverse Wallet connection failed:", response);
           showPopup("Failed to connect to Xverse Wallet. Please try again.");
         }
-      } else if (typeof window.XverseProviders.connect === "function") {
-        console.log("Attempting fallback connection using 'connect' method");
-        const response = await window.XverseProviders.connect(); // Alternative method
-        console.log("Fallback connection response:", response);
-        showPopup("Fallback connection succeeded. Check console for details.");
       } else {
-        console.error("No valid connection method available on XverseProviders.");
-        showPopup("Xverse Wallet does not support a valid connection method. Please check the wallet's integration documentation.");
+        console.error("StacksProvider request method not available.");
+        showPopup("Xverse Wallet does not support the 'connect' method. Please check the wallet's integration documentation.");
       }
     } catch (err) {
       console.error("Error connecting to Xverse Wallet:", err); // Debug log
