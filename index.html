@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +15,11 @@
     <div id="buidlButton" class="disabled">BUIDL</div>
     <div id="board"></div>
     <div id="popup" class="popup"></div>
-    <script type="module" src="./js/index.mjs"></script>
-    <script type="module" src="./index.js"></script>
+    
+    <!-- Include the bundled sats-connect library -->
+    <script src="./js/sats-connect.bundle.js"></script>
+    
+    <!-- Include your main project logic -->
+    <script src="./index.js"></script>
 </body>
 </html>
