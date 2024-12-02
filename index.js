@@ -1,6 +1,4 @@
 
-import { request } from "sats-connect";
-
 document.addEventListener("DOMContentLoaded", () => {
   let walletConnected = false;
   let points = 0;
@@ -68,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Initiating wallet connection via wallet_connect...");
 
     try {
-      const response = await request('wallet_connect', {
+      const response = await window.satsConnect.request('wallet_connect', {
         addresses: ['ordinals', 'payment', 'stacks'],
         message: "Connect your Xverse Wallet to MIDL Board Game",
       });
