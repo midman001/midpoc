@@ -1,0 +1,152 @@
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    padding: 10px 20px;
+}
+
+.header img {
+    height: 40px;
+}
+
+.header .right-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.connect-button {
+    padding: 5px 15px;
+    background-color: orange;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.connect-button.disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.main-container {
+    position: relative;
+    height: calc(100vh - 60px);
+    background: url('background.webp') center center/cover no-repeat;
+}
+
+.onboarding-section,
+.available-quests-section,
+.daily-quests-section {
+    position: absolute;
+    width: 350px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.onboarding-section {
+    top: 10%;
+    left: 5%;
+}
+
+.available-quests-section {
+    top: 35%;
+    left: 5%;
+}
+
+.daily-quests-section {
+    top: 60%;
+    left: 5%;
+}
+
+.section-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.quest-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: gray;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: not-allowed;
+    display: inline-block;
+}
+
+.quest-button.enabled {
+    background-color: orange;
+    cursor: pointer;
+}
+
+.buidl-button {
+    position: absolute;
+    background-color: orange;
+    color: white;
+    font-size: 22px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.board {
+    position: absolute;
+    top: 65%;
+    left: 25%;
+    width: 50%;
+    height: 20%;
+    display: flex;
+    perspective: 1000px;
+}
+
+.square {
+    flex: 1;
+    background-color: orange;
+    opacity: 0.1;
+    height: 100%;
+    transform-origin: center;
+}
+
+.square.completed {
+    opacity: 1;
+}
+
+.popup {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 165, 0, 0.9);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1000;
+}
+
+.popup.active {
+    display: block;
+}
