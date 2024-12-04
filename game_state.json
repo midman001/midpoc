@@ -1,0 +1,169 @@
+{
+  "players": {
+    "player1": {
+      "playerId": "player1",
+      "name": "Player 1",
+      "score": 525,
+      "boost": 0.1,
+      "exceptionalBoost": 0.06,
+      "referralBoost": 0.04,
+      "leaderboardPosition": 1,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 8
+    },
+    "player2": {
+      "playerId": "player2",
+      "name": "Player 2",
+      "score": 315,
+      "boost": 0.24,
+      "exceptionalBoost": 0.1,
+      "referralBoost": 0.04,
+      "leaderboardPosition": 2,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 3
+    },
+    "player3": {
+      "playerId": "player3",
+      "name": "Player 3",
+      "score": 965,
+      "boost": 0.32,
+      "exceptionalBoost": 0.03,
+      "referralBoost": 0.04,
+      "leaderboardPosition": 3,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 0
+    },
+    "player4": {
+      "playerId": "player4",
+      "name": "Player 4",
+      "score": 857,
+      "boost": 0.32,
+      "exceptionalBoost": 0.05,
+      "referralBoost": 0.05,
+      "leaderboardPosition": 4,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 5
+    },
+    "player5": {
+      "playerId": "player5",
+      "name": "Player 5",
+      "score": 178,
+      "boost": 0.15,
+      "exceptionalBoost": 0.08,
+      "referralBoost": 0.09,
+      "leaderboardPosition": 5,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 3
+    },
+    "player6": {
+      "playerId": "player6",
+      "name": "Player 6",
+      "score": 770,
+      "boost": 0.18,
+      "exceptionalBoost": 0.04,
+      "referralBoost": 0.06,
+      "leaderboardPosition": 6,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 4
+    },
+    "player7": {
+      "playerId": "player7",
+      "name": "Player 7",
+      "score": 874,
+      "boost": 0.32,
+      "exceptionalBoost": 0.08,
+      "referralBoost": 0.0,
+      "leaderboardPosition": 7,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 7
+    },
+    "player8": {
+      "playerId": "player8",
+      "name": "Player 8",
+      "score": 388,
+      "boost": 0.31,
+      "exceptionalBoost": 0.04,
+      "referralBoost": 0.02,
+      "leaderboardPosition": 8,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 2
+    },
+    "player9": {
+      "playerId": "player9",
+      "name": "Player 9",
+      "score": 729,
+      "boost": 0.16,
+      "exceptionalBoost": 0.06,
+      "referralBoost": 0.07,
+      "leaderboardPosition": 9,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 6
+    },
+    "player10": {
+      "playerId": "player10",
+      "name": "Player 10",
+      "score": 220,
+      "boost": 0.48,
+      "exceptionalBoost": 0.09,
+      "referralBoost": 0.05,
+      "leaderboardPosition": 10,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 9
+    },
+    "player11": {
+      "playerId": "player11",
+      "name": "Player 11",
+      "score": 761,
+      "boost": 0.15,
+      "exceptionalBoost": 0.02,
+      "referralBoost": 0.03,
+      "leaderboardPosition": 11,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 10
+    },
+    "player12": {
+      "playerId": "player12",
+      "name": "Player 12",
+      "score": 948,
+      "boost": 0.22,
+      "exceptionalBoost": 0.01,
+      "referralBoost": 0.01,
+      "leaderboardPosition": 12,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 7
+    },
+    "player13": {
+      "playerId": "player13",
+      "name": "Player 13",
+      "score": 948,
+      "boost": 0.5,
+      "exceptionalBoost": 0.04,
+      "referralBoost": 0.0,
+      "leaderboardPosition": 13,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 6
+    },
+    "player14": {
+      "playerId": "player14",
+      "name": "Player 14",
+      "score": 239,
+      "boost": 0.14,
+      "exceptionalBoost": 0.09,
+      "referralBoost": 0.07,
+      "leaderboardPosition": 14,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 1
+    },
+    "player15": {
+      "playerId": "player15",
+      "name": "Player 15",
+      "score": 232,
+      "boost": 0.45,
+      "exceptionalBoost": 0.05,
+      "referralBoost": 0.0,
+      "leaderboardPosition": 15,
+      "weeklyLeaderboardPosition": 0,
+      "refereeCount": 9
+    }
+  }
+}

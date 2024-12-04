@@ -1,7 +1,8 @@
 
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: #1a1a1a;
     color: white;
     overflow: hidden;
@@ -47,7 +48,8 @@ body {
 
 .onboarding-section,
 .available-quests-section,
-.daily-quests-section {
+.daily-quests-section,
+.leaderboard-section {
     position: absolute;
     width: 350px;
     background-color: rgba(0, 0, 0, 0.7);
@@ -69,6 +71,11 @@ body {
 .daily-quests-section {
     top: 60%;
     left: 5%;
+}
+
+.leaderboard-section {
+    top: 10%;
+    right: 5%;
 }
 
 .section-title {
@@ -149,4 +156,29 @@ body {
 
 .popup.active {
     display: block;
+}
+
+/* Referral section styles */
+.referral-section {
+    position: absolute;
+    width: 350px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    top: 80%;
+    left: 5%;
+}
+
+.referral-code,
+.referee-count {
+    margin-top: 10px;
+    font-size: 16px;
+    color: white;
+}
+
+.referral-code span,
+.referee-count span {
+    font-weight: bold;
+    color: orange;
 }

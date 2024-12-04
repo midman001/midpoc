@@ -1,117 +1,92 @@
 
-let walletConnected = false;
-let points = 0;
-let boost = 0;
-let position = -1;
+// Multiplayer logic using localStorage and a shared JSON file
 
-const connectButton = document.getElementById("connectButton");
-const pointsDisplay = document.getElementById("pointsDisplay");
-const buidlButton = document.getElementById("buidlButton");
-const popup = document.getElementById("popup");
-const onboardingQuests = [
-    { button: document.getElementById("acceptRules"), message: "Rules accepted! +20% BOOST added.", boostIncrease: 0.2 },
-    { button: document.getElementById("joinCommunity"), message: "Joined X Community! +20% BOOST added.", boostIncrease: 0.2 },
-    { button: document.getElementById("followX"), message: "Followed on X! +20% BOOST added.", boostIncrease: 0.2 },
-    { button: document.getElementById("joinDiscord"), message: "Joined Discord! +20% BOOST added.", boostIncrease: 0.2 },
-];
+const gameStateURL = "game_state.json";
 
-const availableQuests = [
-    { button: document.getElementById("quest1"), message: "Like/RT/Comment quest completed! BOOST increased by 10%." },
-    { button: document.getElementById("quest2"), message: "BTC article quiz completed! BOOST increased by 10%." },
-    { button: document.getElementById("quest3"), message: "MIDL Partner followed! BOOST increased by 10%." },
-];
+let playerData = null;
 
-const dailyQuestSection = document.getElementById("dailyQuestSection");
-const board = document.getElementById("board");
-
-function updatePointsDisplay() {
-    pointsDisplay.innerText = `Points: ${points} | BOOST: ${(boost * 100).toFixed(1)}%`;
+// Initialize player data and store in localStorage
+function initializePlayer(playerName) {
+    const playerId = generatePlayerId();
+    playerData = {
+        playerId: playerId,
+        name: playerName,
+        score: 0,
+        boost: 1.0,
+        exceptionalBoost: 0,
+        referralBoost: 0,
+        leaderboardPosition: 0,
+        weeklyLeaderboardPosition: 0,
+        refereeCount: 0,
+        position: 0
+    };
+    localStorage.setItem("playerData", JSON.stringify(playerData));
+    updatePlayerNameDisplay();
+    setConnectButtonState("connected");
+    unlockButtons();
+    createBoard();
+    syncWithServer();
+    updateReferralSection();
 }
 
-function showPopup(message) {
-    popup.innerText = message;
-    popup.classList.add("active");
-    setTimeout(() => {
-        popup.classList.remove("active");
-    }, 3000);
+// Generate a unique player ID
+function generatePlayerId() {
+    return "player" + Math.random().toString(36).substr(2, 9);
 }
 
-function enableButtons(quests) {
-    quests.forEach((quest) => {
-        quest.button.classList.add("enabled");
-        quest.button.classList.remove("disabled");
-        quest.button.disabled = false;
-    });
-}
-
-function handleQuestClick(button, message, boostIncrease) {
-    button.remove();
-    if (boostIncrease) {
-        boost += boostIncrease;
-    } else {
-        boost *= 1.1;
-    }
-    updatePointsDisplay();
-    showPopup(message);
-}
-
-function createDailyQuest(blockNumber) {
-    dailyQuestSection.innerHTML = '<div class="section-title">Daily BUIDL Quest</div>';
-    const dailyQuest = document.createElement("button");
-    dailyQuest.textContent = `Daily Quest: Block ${blockNumber}`;
-    dailyQuest.classList.add("quest-button", "enabled");
-    dailyQuest.addEventListener("click", () => handleQuestClick(dailyQuest, `Daily Quest for Block ${blockNumber} completed! BOOST increased by 10%.`));
-    dailyQuestSection.appendChild(dailyQuest);
-}
-
-function createBoard() {
-    for (let i = 0; i < 30; i++) {
-        const square = document.createElement("div");
-        square.classList.add("square");
-        board.appendChild(square);
+// Update the player's name display in the UI
+function updatePlayerNameDisplay() {
+    const playerNameElement = document.getElementById("playerNameDisplay");
+    if (playerNameElement && playerData) {
+        playerNameElement.textContent = `Welcome, ${playerData.name}!`;
     }
 }
 
-function handleConnectButtonClick() {
-    if (!walletConnected) {
-        walletConnected = true;
-        connectButton.disabled = true;
-        connectButton.classList.add("disabled");
-        enableButtons(onboardingQuests);
-        enableButtons(availableQuests);
-        buidlButton.disabled = false;
-        buidlButton.classList.remove("disabled");
+// Update the referral section
+function updateReferralSection() {
+    const playerIdElement = document.getElementById("playerId");
+    const refereeCountValue = document.getElementById("refereeCountValue");
 
-        onboardingQuests.forEach((quest) => {
-            quest.button.addEventListener("click", () => handleQuestClick(quest.button, quest.message, quest.boostIncrease));
+    if (playerData) {
+        playerIdElement.textContent = playerData.playerId;
+        playerIdElement.style.cursor = "pointer";
+        playerIdElement.addEventListener("click", () => {
+            navigator.clipboard.writeText(playerData.playerId);
+            alert("Referral code copied to clipboard!");
         });
 
-        availableQuests.forEach((quest) => {
-            quest.button.addEventListener("click", () => handleQuestClick(quest.button, quest.message, null));
-        });
-
-        boost += 0.2;
-        updatePointsDisplay();
-        showPopup("Wallet connected! +20% BOOST");
+        refereeCountValue.textContent = playerData.refereeCount;
     }
 }
 
-function handleBuidlButtonClick() {
-    if (!walletConnected) {
-        showPopup("Connect your wallet first!");
-        return;
+// Sync local player data with shared JSON and update referral count
+async function syncWithServer() {
+    try {
+        const response = await fetch(gameStateURL);
+        const gameState = await response.json();
+
+        // Update the shared JSON file with the current player's data
+        gameState.players[playerData.playerId] = playerData;
+
+        // Update referral section dynamically
+        updateReferralSection();
+
+        await updateGameState(gameState);
+    } catch (error) {
+        console.error("Error syncing with server:", error);
     }
-    position += 1;
-    points += Math.round(100 * boost);
-    const squares = document.querySelectorAll(".square");
-    if (squares[position]) {
-        squares[position].classList.add("completed");
-    }
-    createDailyQuest(position + 1);
-    updatePointsDisplay();
-    showPopup(`BUIDL Successful! Points earned: ${Math.round(100 * boost)}`);
 }
 
-connectButton.addEventListener("click", handleConnectButtonClick);
-buidlButton.addEventListener("click", handleBuidlButtonClick);
-createBoard();
+// Handle Connect Button click
+function handleConnect() {
+    const playerName = prompt("Enter your player name:");
+    if (playerName) {
+        initializePlayer(playerName);
+    }
+}
+
+// Attach event listener to Connect button
+document.getElementById("connectButton").addEventListener("click", handleConnect);
+
+// Initial setup
+syncWithServer();
